@@ -1,0 +1,32 @@
+#score-label {
+  white-space: pre-line;
+}
+
+#board {
+  display: block;
+  width: 300px;
+  height: 300px;
+
+  .row {
+    display: flex;
+
+    .space {
+      display: inline-flex;
+      width: 100px;
+      height: 100px;
+      border: 1px solid #000;
+
+      &.checked-1 {
+        background-color: brown;
+      }
+
+      &.checked-2 {
+        background-color: olivedrab;
+      }
+
+      &.win-highlight {
+        border-inline: 3px solid yellow;
+      }
+    }
+  }
+}
