@@ -10,9 +10,9 @@ const WIN_PATTERN = [
 ]
 const WIN_PATTERN_LENGTH = WIN_PATTERN.length
 
-const checkedState = new Array(9).fill(0)
-let turn = 1
-let score = [0, 0]
+const checkedState = new Array(9).fill('-')
+let turn = 'x'
+let score = { o: 0, x: 0 }
 
 const isWinning = (state, turn) => {
   let winSpacePattern = []
@@ -31,7 +31,7 @@ const initialize = () => {
 
   const handleClickSpace = element => {
     const index = element.target.getAttribute('data-index')
-    if (checkedState[index] === 0) {
+    if (checkedState[index] === '-') {
       element.target.classList.add(`checked-${turn}`)
       checkedState[index] = turn
 
@@ -43,13 +43,13 @@ const initialize = () => {
         })
 
         // update score
-        score[turn - 1] += 1
+        score[turn] += 1
         const scoreLabel = document.getElementById('score-label')
-        scoreLabel.textContent = `Score A: ${score[0]}\r\nScore B: ${score[1]}`
+        scoreLabel.textContent = `Score X: ${score['x']}\r\nScore O: ${score['o']}`
 
         resetSpaces()
       } else {
-        turn = turn === 1 ? 2 : 1
+        turn = turn === 'x' ? 'o' : 'x'
       }
     }
   }
@@ -72,9 +72,9 @@ document.addEventListener('DOMContentLoaded', () => {
   resetBtn.addEventListener('click', () => {
     const spaces = document.getElementsByClassName('space')
     Array.from(spaces).forEach((space, index) => {
-      space.classList.remove('checked-1', 'checked-2', 'win-highlight')
-      checkedState[index] = 0
-      turn = 1
+      space.classList.remove('checked-x', 'checked-o', 'win-highlight')
+      checkedState[index] = '-'
+      turn = 'x'
     })
 
     initialize()

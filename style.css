@@ -16,11 +16,11 @@
       height: 100px;
       border: 1px solid #000;
 
-      &.checked-1 {
+      &.checked-x {
         background-color: brown;
       }
 
-      &.checked-2 {
+      &.checked-o {
         background-color: olivedrab;
       }
 
