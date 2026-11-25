@@ -1,34 +1,55 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-  <title>Endless tictactoe</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Endless tic-tac-toe</title>
+  <meta name="description" content="Tic-tac-toe with no draws: only the last seven marks stay on the board." />
+  <meta name="theme-color" content="#f4f1ec" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#141312" media="(prefers-color-scheme: dark)" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23221f1a'/%3E%3Cpath d='M20 20l11 11M31 20L20 31' stroke='%23fffdf9' stroke-width='4' stroke-linecap='round'/%3E%3Ccircle cx='43' cy='43' r='7.5' fill='none' stroke='%2362bda9' stroke-width='4'/%3E%3C/svg%3E" />
   <link rel="stylesheet" href="style.css" />
-  <script type="text/javascript" src="index.js"></script>
+  <script type="module" src="index.js"></script>
 </head>
 
 <body>
-  <div>
-    <h1 id="score-label"></h1>
-    <button id="reset-btn">reset</button>
-    <div id="board">
-      <div class="row">
-        <div class="space" data-index="0"></div>
-        <div class="space" data-index="1"></div>
-        <div class="space" data-index="2"></div>
+  <main class="app">
+    <header class="head">
+      <h1>Endless tic-tac-toe</h1>
+      <p class="tagline">No draws — the last seven marks stay on the board.</p>
+    </header>
+
+    <section class="scoreboard" aria-label="Score">
+      <div class="score score-x" id="score-x">
+        <span class="mark" aria-hidden="true">X</span>
+        <span class="value" id="score-x-value">0</span>
       </div>
-      <div class="row">
-        <div class="space" data-index="3"></div>
-        <div class="space" data-index="4"></div>
-        <div class="space" data-index="5"></div>
+      <div class="score score-o" id="score-o">
+        <span class="mark" aria-hidden="true">O</span>
+        <span class="value" id="score-o-value">0</span>
       </div>
-      <div class="row">
-        <div class="space" data-index="6"></div>
-        <div class="space" data-index="7"></div>
-        <div class="space" data-index="8"></div>
-      </div>
+    </section>
+
+    <p class="status" id="status" role="status" aria-live="polite">X to move</p>
+
+    <div id="board" role="group" aria-label="Tic-tac-toe board">
+      <button type="button" class="space" data-index="0" data-mark="-"></button>
+      <button type="button" class="space" data-index="1" data-mark="-"></button>
+      <button type="button" class="space" data-index="2" data-mark="-"></button>
+      <button type="button" class="space" data-index="3" data-mark="-"></button>
+      <button type="button" class="space" data-index="4" data-mark="-"></button>
+      <button type="button" class="space" data-index="5" data-mark="-"></button>
+      <button type="button" class="space" data-index="6" data-mark="-"></button>
+      <button type="button" class="space" data-index="7" data-mark="-"></button>
+      <button type="button" class="space" data-index="8" data-mark="-"></button>
     </div>
-  </div>
+
+    <div class="actions">
+      <button type="button" id="reset-btn">New round</button>
+    </div>
+    <p class="hint">The oldest mark leaves as the eighth is placed.</p>
+  </main>
 </body>
 
 </html>

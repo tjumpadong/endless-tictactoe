@@ -1,82 +1,86 @@
-const WIN_PATTERN = [
-  [0, 1, 2],
-  [3, 4, 5],
-  [6, 7, 8],
-  [0, 3, 6],
-  [1, 4, 7],
-  [2, 5, 8],
-  [0, 4, 8],
-  [2, 4, 6],
-]
-const WIN_PATTERN_LENGTH = WIN_PATTERN.length
+import { EMPTY, createGame, playMove, resetRound } from './game.js'
 
-const checkedState = new Array(9).fill('-')
-let turn = 'x'
-let score = { o: 0, x: 0 }
-
-const isWinning = (state, turn) => {
-  let winSpacePattern = []
-  for (let i = 0; i < WIN_PATTERN_LENGTH; i++) {
-    const pattern = WIN_PATTERN[i]
-    if (state[pattern[0]] === turn && state[pattern[1]] === turn && state[pattern[2]] === turn) {
-      winSpacePattern = pattern
-      break
-    }
-  }
-  return winSpacePattern
+const MARK_SVG = {
+  x: `<svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+        <path d="M31 31 69 69" pathLength="100"></path>
+        <path d="M69 31 31 69" pathLength="100"></path>
+      </svg>`,
+  o: `<svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+        <circle cx="50" cy="50" r="26" pathLength="100"></circle>
+      </svg>`,
 }
 
-const initialize = () => {
-  const spaces = document.getElementsByClassName('space')
-
-  const handleClickSpace = element => {
-    const index = element.target.getAttribute('data-index')
-    if (checkedState[index] === '-') {
-      element.target.classList.add(`checked-${turn}`)
-      checkedState[index] = turn
-
-      const winSpacePattern = isWinning(checkedState, turn)
-      if (winSpacePattern.length > 0) {
-        // highlight
-        winSpacePattern.forEach((highlightIndex) => {
-          spaces[highlightIndex].classList.add('win-highlight')
-        })
-
-        // update score
-        score[turn] += 1
-        const scoreLabel = document.getElementById('score-label')
-        scoreLabel.textContent = `Score X: ${score['x']}\r\nScore O: ${score['o']}`
-
-        resetSpaces()
-      } else {
-        turn = turn === 'x' ? 'o' : 'x'
-      }
-    }
-  }
-
-  const resetSpaces = () => {
-    Array.from(spaces).forEach(space => {
-      space.removeEventListener('click', handleClickSpace)
-    })
-  }
-
-  Array.from(spaces).forEach(space => {
-    space.addEventListener('click', handleClickSpace)
-  })
+const boardEl = document.getElementById('board')
+const statusEl = document.getElementById('status')
+const resetBtn = document.getElementById('reset-btn')
+const scoreEls = {
+  x: { chip: document.getElementById('score-x'), value: document.getElementById('score-x-value') },
+  o: { chip: document.getElementById('score-o'), value: document.getElementById('score-o-value') },
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  initialize()
+const spaces = Array.from(boardEl.getElementsByClassName('space'))
 
-  const resetBtn = document.getElementById('reset-btn')
-  resetBtn.addEventListener('click', () => {
-    const spaces = document.getElementsByClassName('space')
-    Array.from(spaces).forEach((space, index) => {
-      space.classList.remove('checked-x', 'checked-o', 'win-highlight')
-      checkedState[index] = '-'
-      turn = 'x'
-    })
+let game = createGame()
 
-    initialize()
+const cellLabel = (index, mark, isWin) => {
+  const row = Math.floor(index / 3) + 1
+  const column = (index % 3) + 1
+  const content = mark === EMPTY ? 'empty' : mark.toUpperCase()
+  return `Row ${row}, column ${column}, ${content}${isWin ? ', winning cell' : ''}`
+}
+
+const render = () => {
+  spaces.forEach((space, index) => {
+    const mark = game.board[index]
+    const isWin = game.win.includes(index)
+
+    if (space.dataset.mark !== mark) {
+      space.dataset.mark = mark
+      space.innerHTML = mark === EMPTY ? '' : MARK_SVG[mark]
+    }
+
+    space.classList.toggle('checked-x', mark === 'x')
+    space.classList.toggle('checked-o', mark === 'o')
+    space.classList.toggle('win', isWin)
+    space.disabled = game.roundOver
+    space.setAttribute('aria-label', cellLabel(index, mark, isWin))
+
+    const order = game.moves.indexOf(index)
+    if (order === -1) space.style.removeProperty('--age')
+    else space.style.setProperty('--age', String(game.moves.length - 1 - order))
   })
+
+  boardEl.classList.toggle('round-over', game.roundOver)
+
+  for (const player of ['x', 'o']) {
+    const { chip, value } = scoreEls[player]
+    value.textContent = String(game.score[player])
+    chip.classList.toggle('active', !game.roundOver && game.turn === player)
+    chip.classList.toggle('winner', game.roundOver && game.turn === player)
+    chip.setAttribute('aria-current', String(!game.roundOver && game.turn === player))
+  }
+
+  statusEl.textContent = game.roundOver ? `${game.turn.toUpperCase()} wins` : `${game.turn.toUpperCase()} to move`
+}
+
+const move = index => {
+  const next = playMove(game, index)
+  if (next === game) return
+
+  game = next
+  render()
+  if (game.roundOver) resetBtn.focus()
+}
+
+boardEl.addEventListener('click', event => {
+  const space = event.target.closest('.space')
+  if (space) move(Number(space.dataset.index))
 })
+
+resetBtn.addEventListener('click', () => {
+  game = resetRound(game)
+  render()
+  spaces[0].focus()
+})
+
+render()
