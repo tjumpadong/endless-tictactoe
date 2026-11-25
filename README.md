@@ -130,13 +130,13 @@ That publishes the site at `https://<user>.github.io/endless-tictactoe/`.
 
 ## Demo
 
-A live demo is **not published yet** — `https://tjumpadong.github.io/endless-tictactoe/`
-currently returns 404. To try it:
+Live at **https://tjumpadong.github.io/endless-tictactoe/**, deployed from `main` /
+root via GitHub Pages (every push to `main` redeploys it).
+
+To run it locally:
 
 1. Clone `git@github.com:tjumpadong/endless-tictactoe.git`.
 2. Run `bun start` and open `http://localhost:8000`.
 3. Click or tab-and-Enter cells. After the seventh mark, the oldest one leaves with
    each new move; a win boxes the line and updates the score; **New round** resets the
    board but keeps the score.
-
-Once Pages is enabled (see above) this section can point at the hosted URL.
